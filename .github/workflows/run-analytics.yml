@@ -54,7 +54,7 @@ jobs:
             echo "Running query $query_name on file $sql_file. Results will output at: $destination_file"
             echo $query
 
-            bq query --debug_mode --use_legacy_sql=false --format=json "$query" > "$destination_file"
+            bq query --use_legacy_sql=false --format=json "$query" > "$destination_file"
 
             echo $(cat $destination_file)
           done
