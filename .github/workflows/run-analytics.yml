@@ -48,10 +48,13 @@ jobs:
           mkdir -p data
           for sql_file in queries/*.sql; do
             query_name=$(basename "$sql_file" .sql)
-            echo "running query $query_name on file $sql_file"
             query=$(cat $sql_file)
+            destination_file="data/${query_name}.json"
+
+            echo "Running query $query_name on file $sql_file. Results will output at: $destination_file"
             echo $query
-            bq query --use_legacy_sql=false --format=json $query > "data/${query_name}.json"
+
+            bq query --use_legacy_sql=false --format=json "$query" > "$destination_file"
           done
       
       - name: Commit and push results
