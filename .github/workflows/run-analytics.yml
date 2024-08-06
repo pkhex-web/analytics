@@ -45,6 +45,7 @@ jobs:
           mkdir -p data
           for sql_file in queries/*.sql; do
             query_name=$(basename "$sql_file" .sql)
+            echo "running query $query_name on file $sql_file"
             bq query --use_legacy_sql=false --format=json < "$sql_file" > "data/${query_name}.json"
           done
       
