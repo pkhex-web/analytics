@@ -38,7 +38,9 @@ jobs:
           project_id: pkhex-everywhere
 
       - name: Test connection
-        run: 'gcloud info'
+        run: |
+          gcloud info
+          bq show
   
       - name: Run SQL Queries and Save Results
         run: |
