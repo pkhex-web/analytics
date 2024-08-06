@@ -49,7 +49,7 @@ jobs:
           for sql_file in queries/*.sql; do
             query_name=$(basename "$sql_file" .sql)
             echo "running query $query_name on file $sql_file"
-            bq query --use_legacy_sql=false --format=json "$(cat "$sql_file")" > "data/${query_name}.json"
+            bq query --use_legacy_sql=false --format=json "$(cat "$sql_file")" > "data/$query_name"
           done
       
       - name: Commit and push results
