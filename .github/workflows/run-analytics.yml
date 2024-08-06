@@ -36,6 +36,9 @@ jobs:
         uses: 'google-github-actions/setup-gcloud@v2'
         with:
           project_id: pkhex-everywhere
+
+      - name: Test connection
+        run: 'gcloud info'
   
       - name: Run SQL Queries and Save Results
         run: |
