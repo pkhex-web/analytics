@@ -54,7 +54,9 @@ jobs:
             echo "Running query $query_name on file $sql_file. Results will output at: $destination_file"
             echo $query
 
-            bq query --debug_mode --use_legacy_sql=false --format=json "select * from \`analytics_452605918.events_*\` limit 1;"
+            bq query --debug_mode --use_legacy_sql=false --format=json "$query" > "$destination_file"
+
+            echo $(cat $destination_file)
           done
       
       - name: Commit and push results
