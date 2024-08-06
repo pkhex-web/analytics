@@ -1,0 +1,55 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Run Analytics
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  schedule:
+    - cron: '0 3 * * *' # every day at 3 AM
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions: 
+  contents: write
+  id-token: write
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  run_queries:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Set up Google Cloud SDK
+        uses: 'google-github-actions/setup-gcloud@v2'
+        with:
+          project_id: pkhex-everywhere
+  
+      - name: Run SQL Queries and Save Results
+        run: |
+          mkdir -p data
+          for sql_file in queries/*.sql; do
+            query_name=$(basename "$sql_file" .sql)
+            bq query --use_legacy_sql=false --format=json < "$sql_file" > "data/${query_name}.json"
+          done
+      
+      - name: Commit and push results
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add data/*.json
+          current_date=$(date +'%Y%m%d')
+          git commit -m "Add query results on $current_date"
+          git push
