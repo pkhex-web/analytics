@@ -30,6 +30,7 @@ jobs:
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
+          project_id: pkhex-everywhere
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
       - name: Set up Google Cloud SDK
@@ -48,7 +49,7 @@ jobs:
           for sql_file in queries/*.sql; do
             query_name=$(basename "$sql_file" .sql)
             echo "running query $query_name on file $sql_file"
-            bq query --use_legacy_sql=false --format=json < "$sql_file" > "data/${query_name}.json"
+            bq query --use_legacy_sql=false --format=json "$(cat "$sql_file")" > "data/${query_name}.json"
           done
       
       - name: Commit and push results
